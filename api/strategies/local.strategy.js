@@ -1,4 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy
+const User = require('../models/user.model')
+const bcrypt = require('bcryptjs')
 require('dotenv').config()
 
 

@@ -5,7 +5,7 @@ const utils = {
     console.log('Url: ', req.url)
     console.log('Req headers:', req.headers);
     console.log('Req body',req.body)
-  }
+  },
 }
 
 module.exports = utils

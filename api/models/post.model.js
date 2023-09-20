@@ -9,6 +9,14 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    extract: {
+        type: String,
+        required: false,
+    },
+    cover: {
+        type: String,
+        default: 'generic1.jpeg',
+    },
     userId: {
         type: String,
         required: true
