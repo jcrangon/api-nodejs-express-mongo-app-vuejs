@@ -51,7 +51,7 @@ async (req,res) => {
         // on ne peut pas réinscrire le meme utilisateur s'il
         // existe
         console.error('Error 400: L\'utilisateur existe déjà')
-          return res.status(400).json({ messsage: "L'utilisateur existe déjà" });
+          return res.status(400).json({errors: [{ msg: "L'utilisateur existe déjà" },]});
       }
 
       // Si l'utilisateur n'existe pas déjà, on le crée
@@ -138,7 +138,7 @@ router.post('/logout', async (req,res) => {
   // on récup le refresh token du cookie
  
   const refreshToken = req.cookies.refreshToken;
-  
+
   // suppression des cookies
   await res.clearCookie('refreshToken');
   await res.clearCookie('connect.sid');
