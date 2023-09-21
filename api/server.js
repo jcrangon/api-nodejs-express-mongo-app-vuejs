@@ -8,6 +8,7 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const utils = require('./services/utils')
 
 // definition du port
 const port = process.env.PORT || 5000;
@@ -49,6 +50,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   saveUninitialized: false,
   resave: false,
+  cookie: {
+    secure: false, // false => http, true => https
+  },
   store: MongoStore.create({
     mongoUrl: process.env.DATABASE_URL,
     autoRemove: 'interval',
@@ -63,6 +67,26 @@ app.use(session({
 
 // cookie-parser
 app.use(cookieParser())
+
+// Middleware pour générer un jeton CSRF et l'ajouter aux cookies
+app.use((req, res, next) => {
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = utils.generateCsrfToken()
+  }
+
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE') {
+    // Vérifier le jeton CSRF pour les requêtes POST, PUT, DELETE
+    const clientCsrfToken = req.cookies['csrf-token'] || req.headers['x-csrf-token'];
+
+    if (!clientCsrfToken || clientCsrfToken !== req.session.csrfToken ) {
+      return res.status(403).json({ message: 'Jetons CSRF invalides' });
+    }
+  }
+  res.cookie('csrf-token', req.session.csrfToken, {
+    httpOnly: true, // Le rend HttpOnly
+  })
+  next()
+})
 
 // creation des 2 régions de routes:
 app.use('/api/v1/auth', authRoutes);

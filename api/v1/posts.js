@@ -92,6 +92,7 @@ router.get('/page/:page/:articlesPerPage', async (req,res) => {
 router.get('/single/:id', async (req,res) => {
   utils.logRequest(req)
   // res.send(`Récupérer l'article dont l'id est: ${req.params.id}`)
+  
   try {
     const postId = req.params.id;
     const post = await Post.findById(postId);
@@ -129,14 +130,25 @@ router.patch('/update/:id',
 
 passport.authenticate('jwt', { session: false }), 
 
+// upload du fichier
+upload.single('imageFile'),
+
 async (req,res) => {
   utils.logRequest(req)
+  console.log('req.file: ', req.file)
   // res.send(`Modifier l'article dont l'id est: ${req.params.id}`)
 
-  try {
-    const post = await Post.findById(req.params.id);
+  // si pas de fichier envoyé
+  // on utilisera l'image generique
+  if(!req.file) {
+    try {
+      const post = await Post.findById(req.params.id);
 
-    if(post.userId === req.body.userId) {
+      if (!post) {
+        return res.status(404).json({ message: 'Article introuvable' });
+      }
+
+      if(post.userId === req.body.userId) {
         await Post.updateOne({$set: req.body})
         
         const updated = await Post.findById(post._id)
@@ -146,15 +158,45 @@ async (req,res) => {
         console.log('Res cookies: ', res.cookies)
         res.status(200).json({message: 'update successful', updatedPost: updated });
 
-    } else {
-      console.error('Error 403: Ce post ne vous appartient pas');
-      res.status(403).json({ message: 'Ce post ne vous appartient pas' });
+      } else {
+        console.error('Error 403: Ce post ne vous appartient pas');
+        res.status(403).json({ message: 'Ce post ne vous appartient pas' });
+      }
+    } catch(err) {
+      console.error('Error 500: ', err);
+      res.status(500).json(err);
     }
-  } catch(err) {
-    console.error('Error 500: ', err);
-    res.status(500).json(err);
+
+  } else {
+
+    try {
+      const post = await Post.findById(req.params.id);
+
+      if (!post) {
+        return res.status(404).json({ message: 'Article introuvable' });
+      }
+
+      if(post.userId === req.body.userId) {
+        const imageUrl = `/images/${req.file.filename}`;
+        req.body.cover = imageUrl
+        await Post.updateOne({$set: req.body})
+        
+        const updated = await Post.findById(post._id)
+        console.log('200-article modifié avec succès!')
+        console.log('reponse:', updated)
+        console.log('Res Headers: ', res.headers)
+        console.log('Res cookies: ', res.cookies)
+        res.status(200).json({message: 'update successful', updatedPost: updated });
+
+      } else {
+        console.error('Error 403: Ce post ne vous appartient pas');
+        res.status(403).json({ message: 'Ce post ne vous appartient pas' });
+      }
+    } catch(err) {
+      console.error('Error 500: ', err);
+      res.status(500).json(err);
+    }
   }
-  
 })
 
 // route permetant de supprimer un article

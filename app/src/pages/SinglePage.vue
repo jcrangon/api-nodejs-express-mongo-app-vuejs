@@ -12,18 +12,18 @@
     <main class="position-relative">
       <div class="container mt-5">
         <div class="text-center">
-          <img class="w-100 img-responsive cover" crossorigin="anonymous" :src="`${imgFolderUrl}${post.cover}`" alt=""/>
+          <img class="w-100 img-responsive cover" crossorigin="anonymous" :src="`${imgFolderUrl}${post.cover}`" alt="post cover"/>
         </div>
         <div class="mt-5" v-html="post.content"></div>
 
         <div class="bottom-nav d-flex flex-row justify-content-between align-items-end p-0">
           <div>
-            <button class="btn btn-outline-secondary" :class="{'disabled': prev === null}" @click="navigatePrev" role="link"><i class="fa-solid fa-backward fa-fade"></i>Article Précédent<br></button>
+            <button class="btn btn-outline-secondary" :class="{'disabled': prev === null}" @click="navigatePrev" role="link"><i v-if="prev" class="fa-solid fa-backward fa-fade me-2"></i>Article Précédent<br></button>
           </div>
 
           <div>
 
-            <button class="btn btn-outline-secondary" :class="{'disabled': next === null}" @click="navigateNext" role="link"><i class="fa-solid fa-forward fa-fade"></i>Article Suivant<br></button>
+            <button class="btn btn-outline-secondary" :class="{'disabled': next === null}" @click="navigateNext" role="link">Article Suivant <i class="fa-solid fa-forward fa-fade ms-2"></i><br></button>
 
           </div>
         </div>
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     getPost() {
-      fetch(this.api.singlePost(this.$route.params.id))
+      fetch(this.api.singlePost(this.$route.params.id), {credentials: "include",})
         .then(response => {
             if (!response.ok) {
             throw new Error('Erreur réseau');

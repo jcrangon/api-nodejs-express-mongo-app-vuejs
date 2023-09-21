@@ -1,10 +1,14 @@
 <template>
   <div>
+    <div v-if="!initialized">Loading Editor...</div>
     <editor 
       :id="editorId" 
       v-model="contentValue"
       :api-key="API_KEY" 
-      :init="editorConfig" 
+      :init="editorConfig"
+      :class="{hidden: !initialized}"
+      initial-value="editorDefaultVal"
+      contenteditable="true"
     />
   </div>
 </template>
@@ -21,10 +25,22 @@ export default {
     editorId: String,
     editorDefaultVal: String
   },
+  watch: {
+    editorDefaultVal: async function(newVal) {
+      if (this.editor) {
+        await this.editor.setContent(newVal);
+      }
+      // console.log(newVal);
+    },
+
+  },
   data(){
     return {
       contentValue: '',
       API_KEY: process.env.TINYMCE_API_KEY,
+      
+      initialized: false,
+
       editorConfig: {
         selector: `#${this.editorId}`,
         height: 500,
@@ -37,7 +53,11 @@ export default {
         setup: (editor) => {
           editor.on('init', () => {
             // Met à jour le contenu TinyMCE lorsque la valeur change
+            this.initialized = true
             editor.setContent(this.editorDefaultVal);
+            this.editor = editor
+            this.$emit('editorInitialized', 'done');
+            console.log('initialized')
           });
 
           editor.on('input', () => {
@@ -57,4 +77,7 @@ export default {
 </script>
 
 <style scoped>
+.hidden {
+  visibility: hidden;
+}
 </style>

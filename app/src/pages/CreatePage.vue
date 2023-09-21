@@ -94,11 +94,12 @@ export default {
       try {
           // const token = localStorage.getItem('myblogtoken')
           const response = await fetchWithAuthor(this.api.addPost, {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-          },
-          body: formData,
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+            },
+            body: formData,
+            credentials: "include",
           });
 
           if (response.ok) {

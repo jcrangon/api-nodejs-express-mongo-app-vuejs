@@ -138,10 +138,11 @@ router.post('/logout', async (req,res) => {
   // on récup le refresh token du cookie
  
   const refreshToken = req.cookies.refreshToken;
-
+  
   // suppression des cookies
   await res.clearCookie('refreshToken');
   await res.clearCookie('connect.sid');
+  await res.clearCookie('csrf-token');
  
   
   // //regeneration de l'id de session

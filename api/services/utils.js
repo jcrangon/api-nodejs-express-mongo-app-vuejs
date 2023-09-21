@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const utils = {
   logRequest: (req) => {
     console.log('Req: ', req.originalUrl )
@@ -6,6 +8,9 @@ const utils = {
     console.log('Req headers:', req.headers);
     console.log('Req body',req.body)
   },
+  generateCsrfToken: function() {
+    return crypto.randomBytes(16).toString('hex');
+  }
 }
 
 module.exports = utils

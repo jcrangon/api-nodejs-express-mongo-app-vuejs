@@ -17,6 +17,9 @@ const api = {
     },
     singlePost: (id) => {
       return `${apiConfig.postBaseUrl}/single/${id}`
+    },
+    updatePost: (id) => {
+      return `${apiConfig.postBaseUrl}/update/${id}`
     }
 }
 

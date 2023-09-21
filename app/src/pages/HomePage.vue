@@ -66,7 +66,7 @@ export default {
       }
       this.lock = true
       try{
-        const response = await fetch(this.api.posts(page, perPage))
+        const response = await fetch(this.api.posts(page, perPage),{credentials: "include",})
 
         if(!response.ok){
           throw new Error('Erreur durant la récupération des articles')
@@ -99,6 +99,7 @@ export default {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(post),
+            credentials: "include",
         })
         .then(response => {
             if (!response.ok) {
