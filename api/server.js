@@ -18,6 +18,7 @@ const app = express();
 // sécurisation grâce à la librairie helmet
 app.use(helmet());
 
+
 // désactivation du header x-powered-by
 app.disable('x-powered-by');
 
@@ -68,7 +69,9 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/posts', postsRoutes);
 app.use('/api/v1/user', userRoutes);
 
-
+// permet de supprimer le probleme de CORS
+// pour les images
+app.use('/images', express.static('./images'))
 
 // démarrage du server
 app.listen(port, () => {

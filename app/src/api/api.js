@@ -7,6 +7,17 @@ const api = {
     logout: `${apiConfig.authBaseUrl}/logout`,
     refreshToken: `${apiConfig.authBaseUrl}/refresh-token`,
     addPost: `${apiConfig.postBaseUrl}/add`,
+    baseUrl: apiConfig.baseUrl,
+    imgFolderUrl: apiConfig.imgUrl,
+    posts: (page, perPage) => {
+      return `${apiConfig.postBaseUrl}/page/${page}/${perPage}`
+    },
+    deletePost: (id) => {
+      return `${apiConfig.postBaseUrl}/delete/${id}`
+    },
+    singlePost: (id) => {
+      return `${apiConfig.postBaseUrl}/single/${id}`
+    }
 }
 
 const utils = {

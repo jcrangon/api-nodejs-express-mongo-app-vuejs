@@ -3,7 +3,6 @@ const router = express.Router()
 const utils = require('../services/utils')
 const { validationResult, body } = require('express-validator')
 const Post = require('../models/post.model')
-const User = require('../models/user.model')
 const passport = require('../strategies/passport')
 const multer = require('multer')
 const path = require('path')
@@ -90,16 +89,35 @@ router.get('/page/:page/:articlesPerPage', async (req,res) => {
 
 // route permetant de récupérer un article
 // par son id
-router.get('/:id', async (req,res) => {
+router.get('/single/:id', async (req,res) => {
   utils.logRequest(req)
   // res.send(`Récupérer l'article dont l'id est: ${req.params.id}`)
   try {
-    const post = await Post.findById(req.params.id);
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Article introuvable' });
+    }
+
+    // Recherche du document précédent
+    const precedent = await Post.findOne({ _id: { $lt: postId } }).sort({ _id: -1 });
+
+    // Recherche du document suivant
+    const suivant = await Post.findOne({ _id: { $gt: postId } }).sort({ _id: 1 });
+
+    console.log('Document précédent :', precedent);
+    console.log('Document suivant :', suivant);
+
+    const prev = precedent ? precedent._id : null
+    const next = suivant ? suivant._id : null
+    
+    
     console.log('200-article récupéré avec succès!')
     console.log('reponse:', post)
     console.log('Res Headers: ', res.headers)
     console.log('Res cookies: ', res.cookies)
-    return res.status(200).json(post);
+    return res.status(200).json({post: post, prev: prev, next: next});
   } catch(err) {
     console.error('Error 500: ', err);
     return res.status(500).json(err);
@@ -160,7 +178,6 @@ async (req,res) => {
     if (post.userId === req.body.userId) {
         await post.deleteOne();
         console.log('200-article supprimé avec succès!')
-        console.log('reponse:', updated)
         console.log('Res Headers: ', res.headers)
         console.log('Res cookies: ', res.cookies)
         return res.status(200).json({ message: 'Supprimé avec succès' });

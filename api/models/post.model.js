@@ -15,7 +15,7 @@ const PostSchema = new mongoose.Schema({
     },
     cover: {
         type: String,
-        default: 'generic1.jpeg',
+        default: '/images/generic1.jpg',
     },
     userId: {
         type: String,

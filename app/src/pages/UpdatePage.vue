@@ -42,5 +42,7 @@ export default {
 <style scoped>
 main {
   min-height: 800px;
+  margin: 0 auto;
+  max-width: 100%;
 }
 </style>

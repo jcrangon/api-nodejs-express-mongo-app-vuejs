@@ -114,6 +114,8 @@ export default {
 <style scoped>
   main {
     min-height: 800px;
+    max-width: 100%;
+    margin: 0 auto;
   }
   form {
     max-width: 600px;
